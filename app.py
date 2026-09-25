@@ -19,8 +19,8 @@ def signup():
 
     data = request.get_json()
 
-    username = data.get("username", "").strip 
-    password = data.get("password", "").strip
+    username = data.get("username", "").strip() 
+    password = data.get("password", "").strip()
     email    = data.get("email",    "").strip().lower()
     phone_number = data.get("phone_number", "").strip()
 
@@ -43,12 +43,13 @@ def signup():
             """,(username,
                  password,
                  email,
-                 phone_number))
+                 phone_number)
+                 )
         
         conn.commit()
     except Exception as e:
         traceback.print_exc()
-        return({"error":str(e)})
+        return({"error":str(e)}),500
 
     return jsonify({"message":"Account created"}),200
 
