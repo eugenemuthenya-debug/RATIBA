@@ -49,6 +49,22 @@ def signup():
             conn.close()
             return jsonify({"error":"Username already exists."}),409
 
+        
+                    #Checks if email already exists 
+        cursor.execute("""
+                        SELECT user_id
+                        FROM users
+                        WHERE email = %s
+                                    """,
+                    (email,)
+                    )
+        existing_email = cursor.fetchone()
+                
+        if existing_email :
+                        cursor.close()
+                        conn.close()
+                        return{"error":"Email already registered"},409
+
         cursor.execute("""
             INSERT INTO users(
             username,
@@ -63,20 +79,6 @@ def signup():
                  )
 
         
-            #Checks if email already exists 
-        cursor.execute("""
-                    SELECT user_id
-                    FROM users
-                    WHERE email = %s
-                            """,
-            (email,)
-            )
-        existing_email = cursor.fetchone()
-        
-        if existing_email :
-                cursor.close()
-                conn.close()
-                return{"error":"Email already registered"},409
         
         conn.commit()
     except Exception as e:
