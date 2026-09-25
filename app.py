@@ -27,7 +27,7 @@ def signup():
     # check for empty fields
     if not all([username, password, email, phone_number]):
         return jsonify({"error": "All fields are required"}), 400
-    hashed_password = Bcrypt.generate_password_hash(password).decode("utf-8")
+    # hashed_password = Bcrypt.generate_password_hash(password).decode("utf-8")
 
     try:
         conn = get_db_connection()
@@ -41,7 +41,7 @@ def signup():
             phone_number)
             VALUES(%s,%s,%s,%s)
             """,(username,
-                 hashed_password,
+                 password,
                  email,
                  phone_number))
         
