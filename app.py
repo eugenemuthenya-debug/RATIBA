@@ -119,7 +119,7 @@ def login():
     return jsonify({"message":"Welcome back."})
 
 # add tasks
-@app.route("/add_task",methods =["POST"])
+@app.route("api/add_task",methods =["POST"])
 def add_task():
     data = request.get_json()
 
