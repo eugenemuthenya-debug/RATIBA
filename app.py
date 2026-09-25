@@ -45,10 +45,9 @@ def signup():
                         )
         existing_username = cursor.fetchone()
         if existing_username:
-                cursor.close()
-                conn.close()
-                return jsonify({"error":"Username already exists."}),409
-        
+            cursor.close()
+            conn.close()
+            return jsonify({"error":"Username already exists."}),409
 
         cursor.execute("""
             INSERT INTO users(
@@ -105,7 +104,13 @@ def login():
                         SELECT * FROM users 
                         WHERE email = %s
                     """,(email,))
+        conn.commit()
         user = cursor.fetchone()
+
+        # if user isnt found
+        if not user :
+             return jsonify({"error":"User does not exist"})
+        return jsonify({"message":"Welcome back."})
     except Exception as e:
          traceback.print_exc()
 
