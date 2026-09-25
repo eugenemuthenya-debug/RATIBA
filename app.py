@@ -7,6 +7,7 @@ import traceback
 
 app = Flask(__name__)
 CORS(app)
+bcrypt = Bcrypt(app)
 
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
@@ -27,11 +28,27 @@ def signup():
     # check for empty fields
     if not all([username, password, email, phone_number]):
         return jsonify({"error": "All fields are required"}), 400
-    # hashed_password = Bcrypt.generate_password_hash(password).decode("utf-8")
+    password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
+
 
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+
+        # check existing user 
+        cursor.execute("""
+                    SELECT user_id
+                    FROM users
+                    WHERE username = %s 
+                        """,
+                        (username,)
+                        )
+        existing_username = cursor.fetchone()
+        if existing_username:
+                cursor.close()
+                conn.close()
+                return jsonify({"error":"Username already exists."}),409
+        
 
         cursor.execute("""
             INSERT INTO users(
@@ -41,10 +58,26 @@ def signup():
             phone_number)
             VALUES(%s,%s,%s,%s)
             """,(username,
-                 password,
+                 password_hash,
                  email,
                  phone_number)
                  )
+
+        
+            #Checks if email already exists 
+        cursor.execute("""
+                    SELECT user_id
+                    FROM users
+                    WHERE email = %s
+                            """,
+            (email,)
+            )
+        existing_email = cursor.fetchone()
+        
+        if existing_email :
+                cursor.close()
+                conn.close()
+                return{"error":"Email already registered"},409
         
         conn.commit()
     except Exception as e:
@@ -52,6 +85,31 @@ def signup():
         return({"error":str(e)}),500
 
     return jsonify({"message":"Account created"}),200
+
+@app.route("/api/log-in",methods = ["POST"])
+def login():
+    data = request.get_json()
+
+    email = data.get("email", "").strip()
+    password = data.get("password", "").strip()
+
+    # check for empty fields
+    if not email or not password:
+        return jsonify({"error": "Email and password are required"}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+                        SELECT * FROM users 
+                        WHERE email = %s
+                    """,(email,))
+        user = cursor.fetchone()
+    except Exception as e:
+         traceback.print_exc()
+
+
 
 
 
