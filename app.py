@@ -36,7 +36,7 @@ def signup():
         cursor.execute("""
             INSERT INTO users(
             username,
-            hashed_password,
+            password_hash,
             email,
             phone_number)
             VALUES(%s,%s,%s,%s)
