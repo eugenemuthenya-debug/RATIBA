@@ -83,7 +83,8 @@ def signup():
         conn.commit()
     except Exception as e:
         traceback.print_exc()
-        return({"error":str(e)}),500
+        # return({"error":str(e)}),500
+        return ({"error":"Something went wrong"}),500
 
     return jsonify({"message":"Account created"}),200
 
@@ -112,9 +113,51 @@ def login():
         # if user isnt found
         if not user :
              return jsonify({"error":"User does not exist"})
-        return jsonify({"message":"Welcome back."})
+        
     except Exception as e:
          traceback.print_exc()
+    return jsonify({"message":"Welcome back."})
+
+# add tasks
+@app.route("/add_task",methods =["POST"])
+def add_task():
+    data = request.get_json()
+
+    task_title =data.get("task_title", "")
+    date = data.get("date","")
+    priority = data.get("priority", "")
+    description = data.get("description", "")
+
+    # empty field check
+    if not task_title or date or description or priority :
+         return jsonify({"error":"All fields are required"}),400
+
+    try:
+     conn = get_db_connection()
+     cursor = conn.cursor()
+
+     cursor.execute("""
+        INSERT INTO tasks(
+        task_title,
+        date,
+        priority,
+        description
+        )
+        VALUES(%s,%s,%s,%s)    
+        """,(
+             task_title,
+             date,
+             priority,
+             description
+        ))
+     conn.commit()
+    except Exception as e:
+         traceback.print_exc()
+        #  return ({"error":str(e)}),500
+         return jsonify({"error":"Task could not be added.Please try again."}),500
+    return jsonify({"message":"Task added successfully"}),200
+
+
 
 
 
