@@ -123,7 +123,7 @@ def login():
 def add_task():
     data = request.get_json()
 
-    task_title =data.get("task_title", "")
+    task_name =data.get("task_title", "")
     date = data.get("date","")
     priority = data.get("priority", "")
     description = data.get("description", "")
@@ -138,14 +138,14 @@ def add_task():
 
      cursor.execute("""
         INSERT INTO tasks(
-        task_title,
+        task_name,
         date,
         priority,
         description
         )
         VALUES(%s,%s,%s,%s)    
         """,(
-             task_title,
+             task_name,
              date,
              priority,
              description
@@ -156,6 +156,7 @@ def add_task():
          return ({"error":str(e)}),500
         #  return jsonify({"error":"Task could not be added.Please try again."}),500
     return jsonify({"message":"Task added successfully"}),200
+
 
 
 
