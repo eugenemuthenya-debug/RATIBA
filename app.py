@@ -157,6 +157,43 @@ def add_task():
         #  return jsonify({"error":"Task could not be added.Please try again."}),500
     return jsonify({"message":"Task added successfully"}),200
 
+@app.route("/api/timetable",methods = ["POST"])
+def time_table():
+     data = request.get_json()
+
+     day = data.get("day", "")
+     mode = data.get("mode", "")
+     start_time = data.get("start_time", "")
+     end_time = data.get("end_time", "")
+
+     try :
+          conn = get_db_connection()
+          cursor = conn.cursor()
+
+          cursor.execute("""
+                INSERT INTO timetable(
+                day,
+                mode,
+                start_time,
+                end_time)
+                VALUES(%s,%s,%s,%s)
+                """,(
+                     day,
+                     mode,
+                     start_time,
+                     end_time
+                ))
+          conn.commit()
+     except Exception as e:
+          traceback.print_exc()
+          return({"error":str(e)}),500
+        #   return({"error":"Something went wrong.Try again."})
+     return jsonify({"message":"TimeTable created successfully"}),200
+     
+
+
+     
+
 
 
 
