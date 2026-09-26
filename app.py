@@ -130,7 +130,7 @@ def add_task():
 
     # empty field check
     if not task_title or date or description or priority :
-         return jsonify({"error":"All fields are required"}),400
+        return jsonify({"error":"All fields are required"}),400
 
     try:
      conn = get_db_connection()
@@ -153,8 +153,8 @@ def add_task():
      conn.commit()
     except Exception as e:
          traceback.print_exc()
-        #  return ({"error":str(e)}),500
-         return jsonify({"error":"Task could not be added.Please try again."}),500
+         return ({"error":str(e)}),500
+        #  return jsonify({"error":"Task could not be added.Please try again."}),500
     return jsonify({"message":"Task added successfully"}),200
 
 
