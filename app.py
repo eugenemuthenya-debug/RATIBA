@@ -129,8 +129,8 @@ def add_task():
     description = data.get("description", "")
 
     # empty field check
-    if not task_title or date or description or priority :
-        return jsonify({"error":"All fields are required"}),400
+    # if not task_title or date or description or priority :
+    #     return jsonify({"error":"All fields are required"}),400
 
     try:
      conn = get_db_connection()
